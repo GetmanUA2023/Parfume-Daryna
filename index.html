@@ -366,12 +366,37 @@
             const phone = document.getElementById('phone').value;
             const department = document.getElementById('department').value;
             const comment = document.getElementById('comment').value;
-            const selectedProducts = document.getElementById('selected-products').value;
+            const selectedProducts = cart; // Используем данные из корзины
 
             // Создаем текст сообщения
-            let orderDetails = `Замовлення:\nПІБ: ${name}\nТелефон: ${phone}\nВідділення Нова пошта: ${department}\nКоментар: ${comment}\n\nТовари:\n${selectedProducts}\n\n`;
+            let orderDetails = `Замовлення:\nПІБ: ${name}\nТелефон: ${phone}\nВідділення Нова пошта: ${department}\nКоментар: ${comment}\n\nТовари:\n`;
 
-            // Отправляем данные в Telegram
+            // Отправляем детали заказа и каждую фотографию отдельно
+            selectedProducts.forEach(item => {
+                orderDetails += `Назва: ${item.name}\nЦіна: ${item.price} грн\n\n`;
+
+                // Отправляем фото
+                fetch('https://api.telegram.org/bot7401377630:AAEVTBujgzhXme3geZetIKeKHeHo6dpxZ2U/sendPhoto', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            chat_id: '-1002391853855',
+                            photo: item.image,
+                            caption: `Назва: ${item.name}\nЦіна: ${item.price} грн`
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Photo sent successfully:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error sending photo:', error);
+                    });
+            });
+
+            // Отправляем текст заказа
             fetch('https://api.telegram.org/bot7401377630:AAEVTBujgzhXme3geZetIKeKHeHo6dpxZ2U/sendMessage', {
                     method: 'POST',
                     headers: {
@@ -384,11 +409,11 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Success:', data);
+                    console.log('Order details sent successfully:', data);
                     alert('Замовлення надіслано!');
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Error sending order details:', error);
                     alert('Виникла помилка при відправці замовлення.');
                 });
 
