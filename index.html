@@ -372,22 +372,38 @@
             const department = document.getElementById('department').value;
             const comment = document.getElementById('comment').value;
 
+            // Создаем текст сообщения
+            let orderDetails = `Замовлення:\nПІБ: ${name}\nТелефон: ${phone}\nВідділення Нова пошта: ${department}\nКоментар: ${comment}\n\nТовари:\n`;
+
+            cart.forEach(item => {
+                orderDetails += `Назва: ${item.name}\nЦіна: ${item.price} грн\n`;
+                orderDetails += `Фото: ${item.image}\n\n`;
+            });
+
             // Отправляем данные в Telegram
             fetch('https://api.telegram.org/bot7401377630:AAEVTBujgzhXme3geZetIKeKHeHo6dpxZ2U/sendMessage', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    chat_id: '-1002391853855',
-                    text: `Замовлення:\nПІБ: ${name}\nТелефон: ${phone}\nВідділення Нова пошта: ${department}\nКоментар: ${comment}`
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: '-1002391853855',
+                        text: orderDetails
+                    })
                 })
-            });
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    alert('Замовлення надіслано!');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Виникла помилка при відправці замовлення.');
+                });
 
             // Очищаем корзину после отправки
             cart = [];
             renderCart();
-            alert('Замовлення надіслано!');
         }
 
         function submitReview() {
