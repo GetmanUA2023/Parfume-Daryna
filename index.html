@@ -378,7 +378,7 @@
             const department = document.getElementById('department').value;
             const comment = document.getElementById('comment').value;
 
-            let orderDetails = `Замовлення:\nПІБ: ${name}\nТелефон: ${phone}\nВідділення Нова пошта: ${department}\nКоментар: ${comment}\n\nТовари:\n`;
+            let orderDetails = `Замовлення:\nПІБ: ${name}\nТелефон: ${phone}\nВідділення Нова пошта: ${department}\nМiсто: ${comment}\n\nТовари:\n`;
 
             cart.forEach(item => {
                 orderDetails += `Назва: ${item.name}\nЦіна: ${item.price} грн\n\n`;
