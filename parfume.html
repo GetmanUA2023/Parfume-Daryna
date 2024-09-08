@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ваш магазин парфумерії</title>
+    <style>
+        /* Стили по умолчанию */
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        
+        header {
+            background: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        header img {
+            width: 50px;
+            vertical-align: middle;
+        }
+        
+        .container {
+            width: 90%;
+            margin: auto;
+            padding-top: 60px;
+            /* Отступ для фиксированного header */
+        }
+        
+        .albums {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .album {
+            flex: 1 1 calc(50% - 20px);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            background: #fff;
+        }
+        
+        .album-header {
+            background: #f4a261;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .sub-album {
+            display: none;
+            animation: slideDown 0.5s ease;
+        }
+        
+        .sub-album.show {
+            display: block;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .product-card {
+            background: #fff;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .product-card img {
+            width: 150px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        
+        .product-card .price {
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .product-card .discount-info {
+            color: #e63946;
+            font-weight: bold;
+        }
+        
+        .product-card .timer {
+            margin: 10px 0;
+            font-size: 14px;
+            color: #e63946;
+        }
+        
+        .quantity-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .quantity-container input {
+            width: 60px;
+            padding: 5px;
+        }
+        
+        .order-form,
+        .review-form {
+            background: #fff;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .order-form label,
+        .review-form label {
+            display: block;
+            margin: 5px 0;
+        }
+        
+        .order-form input,
+        .review-form input,
+        .order-form textarea,
+        .review-form textarea {
+            width: calc(100% - 16px);
+            padding: 8px;
+            margin: 5px 0;
+        }
+        
+        .order-form button,
+        .review-form button {
+            background: #f4a261;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .order-form button:hover,
+        .review-form button:hover {
+            background: #e07a5f;
+        }
+        
+        .reviews {
+            margin: 20px 0;
+        }
+        
+        .review {
+            background: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .review .rating {
+            font-size: 18px;
+            color: #f4a261;
+        }
+        
+        .review .text {
+            margin: 10px 0;
+        }
+        
+        .cart {
+            background: #fff;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cart-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        
+        .cart-item img {
+            width: 100px;
+            height: auto;
+            margin-right: 15px;
+        }
+        
+        .cart-item .info {
+            flex: 1;
+        }
+        
+        .cart-item .remove-btn {
+            background: #e63946;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .cart-item .remove-btn:hover {
+            background: #d62839;
+        }
+        
+        .cart-summary {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .timer {
+            color: #e63946;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="images/perfumeX.jpg" alt="Логотип">
+        <h1>Ваш магазин парфумерії</h1>
+    </header>
+
+    <div class="container">
+        <!-- Альбомы с парфюмерией -->
+        <div class="albums">
+            <!-- Женская продукция -->
+            <div class="album" onclick="toggleProducts('women')">
+                <div class="album-header">Для жінок</div>
+                <div class="sub-album" id="women">
+                    <div class="product-card">
+                        <img src="images/girlparfume1.jpg" alt="Парфюм 1">
+                        <h3>Парфюм Carolina Herrera Good Girl 80ml</h3>
+                        <p class="price">1800 грн</p>
+                        <p class="discount-info">1500 грн</p>
+                        <p class="timer" id="timer1"></p>
+                        <div class="quantity-container">
+                            <input type="number" min="1" value="1">
+                            <button onclick="addToCart('Carolina Herrera Good Girl', 1500, 'images/girlparfume1.jpg')">Додати в корзину</button>
+                        </div>
+                    </div>
+                    <!-- Добавьте другие товары аналогичным образом -->
+                </div>
+            </div>
+
+            <!-- Мужская продукция -->
+            <div class="album" onclick="toggleProducts('men')">
+                <div class="album-header">Для чоловіків</div>
+                <div class="sub-album" id="men">
+                    <div class="product-card">
+                        <img src="images/menparfume1.jpg" alt="Парфюм 1">
+                        <h3>Chanel Egoiste Platinum Pour Homme</h3>
+                        <p class="price">2300 грн</p>
+                        <p class="discount-info">2000 грн</p>
+                        <p class="timer" id="timer4"></p>
+                        <div class="quantity-container">
+                            <input type="number" min="1" value="1">
+                            <button onclick="addToCart('Chanel Egoiste Platinum', 2000, 'images/menparfume1.jpg')">Додати в корзину</button>
+                        </div>
+                    </div>
+                    <!-- Добавьте другие товары аналогичным образом -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Корзина -->
+        <div class="cart" id="cart">
+            <h2>Ваша корзина</h2>
+            <div id="cart-items"></div>
+            <div class="cart-summary" id="cart-summary"></div>
+        </div>
+
+        <!-- Форма для заказа -->
+        <div class="order-form">
+            <h2>Оформлення замовлення</h2>
+            <label for="name">ПІБ:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="phone">Телефон:</label>
+            <input type="text" id="phone" name="phone" required>
+            <label for="department">Відділення Нова пошта:</label>
+            <input type="text" id="department" name="department" required>
+            <label for="comment">Коментар:</label>
+            <textarea id="comment" name="comment"></textarea>
+            <button onclick="submitOrder()">Замовити</button>
+        </div>
+
+        <!-- Форма для отзывов -->
+        <div class="review-form">
+            <h2>Залиште відгук</h2>
+            <label for="review-text">Ваш відгук:</label>
+            <textarea id="review-text" name="review-text" required></textarea>
+            <label for="rating">Оцінка (1-5):</label>
+            <input type="number" id="rating" name="rating" min="1" max="5" required>
+            <button onclick="submitReview()">Відправити відгук</button>
+        </div>
+
+        <!-- Список отзывов -->
+        <div class="reviews" id="reviews">
+            <!-- Отзывы будут добавляться сюда -->
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+        const cartElement = document.getElementById('cart-items');
+        const cartSummary = document.getElementById('cart-summary');
+        const reviewsElement = document.getElementById('reviews');
+
+        function toggleProducts(albumId) {
+            const subAlbum = document.getElementById(albumId);
+            subAlbum.classList.toggle('show');
+        }
+
+        function addToCart(productName, productPrice, productImage) {
+            cart.push({
+                name: productName,
+                price: productPrice,
+                image: productImage
+            });
+            renderCart();
+        }
+
+        function renderCart() {
+            cartElement.innerHTML = '';
+            let total = 0;
+            cart.forEach(item => {
+                total += item.price;
+                cartElement.innerHTML += `
+                    <div class="cart-item">
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="info">
+                            <h4>${item.name}</h4>
+                            <p>${item.price} грн</p>
+                        </div>
+                        <button class="remove-btn" onclick="removeFromCart('${item.name}')">Видалити</button>
+                    </div>
+                `;
+            });
+            cartSummary.innerHTML = `Всього: ${total} грн`;
+        }
+
+        function removeFromCart(productName) {
+            cart = cart.filter(item => item.name !== productName);
+            renderCart();
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const department = document.getElementById('department').value;
+            const comment = document.getElementById('comment').value;
+
+            // Отправляем данные в Telegram
+            fetch('https://api.telegram.org/bot7401377630:AAEVTBujgzhXme3geZetIKeKHeHo6dpxZ2U/sendMessage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: '-1002391853855',
+                    text: `Замовлення:\nПІБ: ${name}\nТелефон: ${phone}\nВідділення Нова пошта: ${department}\nКоментар: ${comment}`
+                })
+            });
+
+            // Очищаем корзину после отправки
+            cart = [];
+            renderCart();
+            alert('Замовлення надіслано!');
+        }
+
+        function submitReview() {
+            const reviewText = document.getElementById('review-text').value;
+            const rating = document.getElementById('rating').value;
+
+            // Отправляем отзыв в Telegram
+            fetch('https://api.telegram.org/bot7401377630:AAEVTBujgzhXme3geZetIKeKHeHo6dpxZ2U/sendMessage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: '-1002391853855',
+                    text: `Відгук:\nОцінка: ${rating}\nВідгук: ${reviewText}`
+                })
+            });
+
+            // Добавляем отзыв на страницу
+            reviewsElement.innerHTML += `
+                <div class="review">
+                    <div class="rating">Оцінка: ${rating}</div>
+                    <div class="text">${reviewText}</div>
+                </div>
+            `;
+            alert('Відгук відправлено!');
+        }
+
+        // Таймеры
+        function startTimer(id, endTime) {
+            const timerElement = document.getElementById(id);
+
+            function updateTimer() {
+                const now = new Date();
+                const timeRemaining = endTime - now;
+                if (timeRemaining <= 0) {
+                    timerElement.innerHTML = 'Час вийшов!';
+                    return;
+                }
+                const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                timerElement.innerHTML = `${hours} год. ${minutes} хв. ${seconds} сек.`;
+            }
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+
+        // Пример использования таймеров
+        startTimer('timer1', new Date().getTime() + 1000 * 60 * 60 * 24 * 7); // 7 дней
+        startTimer('timer4', new Date().getTime() + 1000 * 60 * 60 * 24 * 7); // 7 дней
+    </script>
+</body>
+
+</html>
